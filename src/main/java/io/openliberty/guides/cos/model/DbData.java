@@ -26,7 +26,6 @@ public class DbData {
     this.cosBucketName = cosBucketName;
   }
 
-
   public String getTitle() {
     return title;
   }

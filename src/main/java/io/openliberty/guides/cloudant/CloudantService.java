@@ -13,15 +13,15 @@ import javax.inject.Inject;
 public class CloudantService {
 
     @Inject
-    @ConfigProperty(name = "cloudant_apikey")
+    @ConfigProperty(name="cloudant_apikey")
     private String apikey;
 
     @Inject
-    @ConfigProperty(name = "cloudant_url")
+    @ConfigProperty(name="cloudant_url")
     private String url;
 
     @Inject
-    @ConfigProperty(name = "cloudant_db")
+    @ConfigProperty(name="cloudant_db")
     private String db;
 
     private Cloudant cdClient;

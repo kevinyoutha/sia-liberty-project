@@ -38,7 +38,7 @@ public interface CloudantClient extends AutoCloseable {
   @Produces(MediaType.APPLICATION_JSON)
   // end::Produces[]
   // tag::getProperties[]
-  public String persist(DbData data) throws UnknownUriException, ProcessingException;
+  public String createDocument(DbData data) throws UnknownUriException, ProcessingException;
   // end::getProperties[]
 }
 // end::SystemClient[]

@@ -14,6 +14,7 @@ package io.openliberty.guides.cos;
 
 import com.ibm.websphere.jaxrs20.multipart.IAttachment;
 import com.ibm.websphere.jaxrs20.multipart.IMultipartBody;
+import io.openliberty.guides.cos.model.DbData;
 
 import java.io.*;
 import java.util.Iterator;
@@ -101,7 +102,10 @@ public class CosController {
         e.printStackTrace();
       }
     }
-    return Response.ok("test").build();
+    DbData data = new DbData("","","");
+    DbData object = manager.createObject(data);
+    String document = manager.createDocument("", object);
+    return Response.ok(document).build();
   }
 
 

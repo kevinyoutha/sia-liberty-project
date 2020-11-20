@@ -110,7 +110,7 @@ public class CosService {
     return files;
   }
 
-  public DbData upload(DbData data){
+  public DbData createObject(DbData data){
     try{
       if(!s3Client.doesBucketExist(BUCKETNAME))
         s3Client.createBucket(BUCKETNAME);
@@ -126,23 +126,9 @@ public class CosService {
     return data;
   }
 
-  public String persistCloudant(String hostname, DbData dbData) {
-    String  response = null;
-    if (hostname.equals("localhost")) {
-      response = persistWithDefaultHostName(dbData);
-    } else {
-      response = persistWithGivenHostName(hostname,dbData);
-    }
-
-    return response;
-  }
-
-  // tag::getPropertiesWithDefaultHostName[]
-  private String  persistWithDefaultHostName(DbData dbData) {
+  public String createDocument(DbData dbData) {
     try {
-      // tag::defaultRCGetProperties[]
-      return cloudantClient.persist(dbData);
-      // end::defaultRCGetProperties[]
+      return cloudantClient.createDocument(dbData);
     } catch (UnknownUriException e) {
       System.err.println("The given URI is not formatted correctly.");
     } catch (ProcessingException ex) {
@@ -150,31 +136,7 @@ public class CosService {
     }
     return null;
   }
-  // end::getPropertiesWithDefaultHostName[]
 
-  // tag::getPropertiesWithGivenHostName[]
-  private String persistWithGivenHostName(String hostname, DbData dbData) {
-    String customURIString = "http://" + hostname + ":" + DEFAULT_PORT + "/cloudant";
-    URI customURI = null;
-    try {
-      customURI = URI.create(customURIString);
-      // tag::customRestClientBuilder[]
-      CloudantClient customRestClient = RestClientBuilder.newBuilder()
-                                        .baseUri(customURI)
-                                        .register(UnknownUriExceptionMapper.class)
-                                        .build(CloudantClient.class);
-      // end::customRestClientBuilder[]
-      // tag::customRCGetProperties[]
-      return customRestClient.persist(dbData);
-      // end::customRCGetProperties[]
-    } catch (ProcessingException ex) {
-      handleProcessingException(ex);
-    } catch (UnknownUriException e) {
-      System.err.println("The given URI is unreachable.");
-    }
-    return null;
-  }
-  // end::getPropertiesWithGivenHostName[]
 
   private void handleProcessingException(ProcessingException ex) {
     Throwable rootEx = ExceptionUtils.getRootCause(ex);
