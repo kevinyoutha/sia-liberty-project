@@ -11,7 +11,7 @@
  *******************************************************************************/
 // end::copyright[]
 // tag::mapper[]
-package io.openliberty.guides.inventory.client;
+package io.openliberty.guides.cos.client;
 
 import java.util.logging.Logger;
 import javax.ws.rs.core.MultivaluedMap;

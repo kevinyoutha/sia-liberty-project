@@ -11,21 +11,18 @@
  *******************************************************************************/
 // end::copyright[]
 // tag::client[]
-package io.openliberty.guides.inventory.client;
+package io.openliberty.guides.cos.client;
 
-import java.util.Properties;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import io.openliberty.guides.cos.model.DbData;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 // tag::RegisterRestClient[]
-@RegisterRestClient(configKey = "systemClient", baseUri = "http://localhost:9080/system")
+@RegisterRestClient(configKey = "cloudantClient", baseUri = "http://localhost:9080/cloudant")
 // end::RegisterRestClient[]
 // tag::RegisterProvider[]
 @RegisterProvider(UnknownUriExceptionMapper.class)
@@ -33,15 +30,15 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 @Path("/properties")
 // tag::SystemClient[]
 // tag::AutoCloseable[]
-public interface SystemClient extends AutoCloseable {
+public interface CloudantClient extends AutoCloseable {
 // end::AutoCloseable[]
 
-  @GET
+  @POST
   // tag::Produces[]
   @Produces(MediaType.APPLICATION_JSON)
   // end::Produces[]
   // tag::getProperties[]
-  public Properties getProperties() throws UnknownUriException, ProcessingException;
+  public String persist(DbData data) throws UnknownUriException, ProcessingException;
   // end::getProperties[]
 }
 // end::SystemClient[]

@@ -4,6 +4,16 @@
     <feature>jaxrs-2.1</feature>
     <feature>jsonp-1.1</feature>
     <feature>cdi-2.0</feature>
+    <feature>cloudant-1.0</feature>
+    <feature>jndi-1.0</feature>
+    <feature>beanValidation-2.0</feature>
+
+    <!-- tag::mpConfig[] -->
+    <feature>mpConfig-1.4</feature>
+    <!-- end::mpConfig[] -->
+    <!-- tag::mpConfig[] -->
+    <feature>mpConfig-1.4</feature>
+    <!-- end::mpConfig[] -->
     <!-- tag::mpConfig[] -->
     <feature>mpConfig-1.4</feature>
     <!-- end::mpConfig[] -->
@@ -18,5 +28,18 @@
   <httpEndpoint host="*" httpPort="${default.http.port}" httpsPort="${default.https.port}"
                 id="defaultHttpEndpoint"/>
 
-  <webApplication location="guide-microprofile-rest-client.war" contextRoot="/"/>
+<!--IBM Cloud Object Storage -->
+  <jndiEntry jndiName="cos/endpoint" value='"https://s3-api.us-geo.objectstorage.softlayer.net"' />
+  <jndiEntry jndiName="cos/location" value='"https://s3-api.us-geo.objectstorage.softlayer.net"' />
+  <jndiEntry jndiName="cos/api-key" value='"https://s3-api.us-geo.objectstorage.softlayer.net"' />
+  <jndiEntry jndiName="cos/service-instance-id" value='"https://s3-api.us-geo.objectstorage.softlayer.net"' />
+
+  <!-- IBM nosql Cloudant database  -->
+  <jndiEntry jndiName="cos/endpoint" value='"https://s3-api.us-geo.objectstorage.softlayer.net"' />
+  <jndiEntry jndiName="cos/location" value='"https://s3-api.us-geo.objectstorage.softlayer.net"' />
+  <jndiEntry jndiName="cos/api-key" value='"https://s3-api.us-geo.objectstorage.softlayer.net"' />
+  <jndiEntry jndiName="cos/service" value='"https://s3-api.us-geo.objectstorage.softlayer.net"' />
+
+
+  <webApplication location="sia-microprofile-test-client.war" contextRoot="/"/>
 </server>

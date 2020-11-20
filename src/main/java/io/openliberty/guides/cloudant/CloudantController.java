@@ -10,23 +10,23 @@
  *     IBM Corporation - Initial implementation
  *******************************************************************************/
 // end::copyright[]
-package io.openliberty.guides.inventory.model;
+package io.openliberty.guides.cloudant;
 
-import java.util.List;
+import io.openliberty.guides.cos.model.DbData;
 
-public class InventoryList {
+import javax.enterprise.context.RequestScoped;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-  private List<SystemData> systems;
+@RequestScoped
+@Path("/")
+public class CloudantController {
 
-  public InventoryList(List<SystemData> systems) {
-    this.systems = systems;
-  }
-
-  public List<SystemData> getSystems() {
-    return systems;
-  }
-
-  public int getTotal() {
-    return systems.size();
+  @POST
+  @Produces(MediaType.APPLICATION_JSON)
+  public String persist(DbData data) {
+    return null;
   }
 }
