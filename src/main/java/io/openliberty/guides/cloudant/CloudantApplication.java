@@ -16,6 +16,6 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.ApplicationPath;
 
 @ApplicationPath("cloudant")
-public class SystemApplication extends Application {
+public class CloudantApplication extends Application {
 
 }

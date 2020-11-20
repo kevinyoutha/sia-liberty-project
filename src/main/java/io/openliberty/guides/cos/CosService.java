@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.ws.rs.ProcessingException;
 
 import com.ibm.cloud.objectstorage.AmazonClientException;
@@ -37,6 +35,7 @@ import com.ibm.cloud.objectstorage.services.s3.AmazonS3;
 import com.ibm.cloud.objectstorage.services.s3.AmazonS3ClientBuilder;
 import com.ibm.cloud.objectstorage.services.s3.model.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -53,38 +52,37 @@ public class CosService {
   private final String FAILURE = "failure";
   private final String BUCKETNAME = "Documents";
 
-//  @Inject
-//  @ConfigProperty(name = "default.http.port")
-//  String DEFAULT_PORT;
-
   @Inject
+  @ConfigProperty(name = "default.http.port")
   String DEFAULT_PORT;
 
+  @Inject
+  @ConfigProperty(name = "cos_apikey")
+  private String apiKey;
+
+  @Inject
+  @ConfigProperty(name = "cos_location")
+  private String location;
+
+  @Inject
+  @ConfigProperty(name = "cos_endpoint")
+  private String endpoint;
+
+  @Inject
+  @ConfigProperty(name = "cos_service_instance_id")
+  private String serviceInstanceId;
 
   @Inject
   @RestClient
   private CloudantClient cloudantClient;
 
-  AmazonS3 s3Client;
+  private AmazonS3 s3Client;
 
-  private CosService() throws NamingException {
-
-    Object apiKeyConstant = new InitialContext().lookup("cos/api-key");
-    String apiKey = (String) apiKeyConstant;
-
-    Object locationConstant = new InitialContext().lookup("cos/location");
-    String location = (String) locationConstant;
-
-    Object endpointConstant = new InitialContext().lookup("cos/endpoint");
-    String endpoint = (String) endpointConstant;
-
-    Object serviceInstanceIdKeyConstant = new InitialContext().lookup("cos/service-instance-id");
-    String serviceInstanceId = (String) serviceInstanceIdKeyConstant;
-
+  public CosService()  {
     s3Client = createClient(apiKey,serviceInstanceId,endpoint,location);
   }
 
-  public static AmazonS3 createClient(String apiKey, String serviceInstanceId, String endpointUrl, String location)
+  private static AmazonS3 createClient(String apiKey, String serviceInstanceId, String endpointUrl, String location)
   {
     AWSCredentials credentials = new BasicIBMOAuthCredentials(apiKey, serviceInstanceId);
     ClientConfiguration clientConfig = new ClientConfiguration()
@@ -100,7 +98,7 @@ public class CosService {
             .build();
   }
 
-  public static List<String> listObjects(AmazonS3 cosClient, String bucketName)
+  public List<String> listObjects(AmazonS3 cosClient, String bucketName)
   {
     List<String> files = new ArrayList<>();
     System.out.println("Listing objects in bucket " + bucketName);
@@ -128,8 +126,7 @@ public class CosService {
     return data;
   }
 
-
-  public String get(String hostname, DbData dbData) {
+  public String persistCloudant(String hostname, DbData dbData) {
     String  response = null;
     if (hostname.equals("localhost")) {
       response = persistWithDefaultHostName(dbData);

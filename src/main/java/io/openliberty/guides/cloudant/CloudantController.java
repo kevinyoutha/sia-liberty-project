@@ -12,9 +12,13 @@
 // end::copyright[]
 package io.openliberty.guides.cloudant;
 
+import com.ibm.cloud.cloudant.v1.model.AllDocsResult;
+import com.ibm.cloud.cloudant.v1.model.DocumentResult;
 import io.openliberty.guides.cos.model.DbData;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -24,9 +28,20 @@ import javax.ws.rs.core.MediaType;
 @Path("/")
 public class CloudantController {
 
+  @Inject
+  CloudantService manager;
+
   @POST
   @Produces(MediaType.APPLICATION_JSON)
-  public String persist(DbData data) {
-    return null;
+  public String createDocument(DbData data) {
+    DocumentResult document = manager.createDocument(data);
+    return document.toString();
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  public AllDocsResult getAll() {
+    AllDocsResult documents = manager.getDocumentsList();
+    return documents;
   }
 }
