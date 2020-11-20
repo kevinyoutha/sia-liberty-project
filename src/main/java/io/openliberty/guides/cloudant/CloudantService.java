@@ -5,11 +5,10 @@ import com.ibm.cloud.cloudant.v1.model.*;
 import com.ibm.cloud.sdk.core.security.IamAuthenticator;
 import io.openliberty.guides.cos.model.DbData;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
-@ApplicationScoped
+@RequestScoped
 public class CloudantService {
 
     @Inject

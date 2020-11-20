@@ -104,7 +104,7 @@ public class CosController {
     }
     DbData data = new DbData("","","");
     DbData object = manager.createObject(data);
-    String document = manager.createDocument("", object);
+    String document = manager.createDocument(object);
     return Response.ok(document).build();
   }
 

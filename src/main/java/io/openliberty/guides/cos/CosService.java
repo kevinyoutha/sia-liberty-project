@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 
@@ -45,7 +46,7 @@ import io.openliberty.guides.cos.client.UnknownUriExceptionMapper;
 import io.openliberty.guides.cos.model.DbData;
 
 // tag::ApplicationScoped[]
-@ApplicationScoped
+@RequestScoped
 // end::ApplicationScoped[]
 public class CosService {
   private final String SUCCESS = "success" ;
