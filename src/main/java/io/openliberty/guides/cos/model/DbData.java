@@ -15,15 +15,38 @@ package io.openliberty.guides.cos.model;
 import java.util.Properties;
 
 public class DbData {
-  private final String title;
-  private final String cosObjectName;
-  private final String cosBucketName;
-  private String status;
+  private  String title;
+  private  String cosObjectName;
+  private  String cosBucketName;
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public void setCosObjectName(String cosObjectName) {
+    this.cosObjectName = cosObjectName;
+  }
+
+  public void setCosBucketName(String cosBucketName) {
+    this.cosBucketName = cosBucketName;
+  }
+
+  private   String status;
 
   public DbData(String title, String cosObjectName, String cosBucketName) {
     this.title = title;
     this.cosObjectName = cosObjectName;
     this.cosBucketName = cosBucketName;
+  }
+
+  public DbData(String title, String cosObjectName, String cosBucketName, String status) {
+    this.title = title;
+    this.cosObjectName = cosObjectName;
+    this.cosBucketName = cosBucketName;
+    this.status = status;
+  }
+
+  public DbData() {
   }
 
   public String getTitle() {

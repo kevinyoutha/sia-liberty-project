@@ -13,15 +13,13 @@
 package io.openliberty.guides.cloudant;
 
 import com.ibm.cloud.cloudant.v1.model.AllDocsResult;
+import com.ibm.cloud.cloudant.v1.model.Document;
 import com.ibm.cloud.cloudant.v1.model.DocumentResult;
 import io.openliberty.guides.cos.model.DbData;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @RequestScoped
@@ -32,16 +30,17 @@ public class CloudantController {
   CloudantService manager;
 
   @POST
+  @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public String createDocument(DbData data) {
-    DocumentResult document = manager.createDocument(data);
-    return document.toString();
+    String response = manager.createDocument(data);
+    return response;
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public AllDocsResult getAll() {
+  public Long getAll() {
     AllDocsResult documents = manager.getDocumentsList();
-    return documents;
+    return documents.getTotalRows();
   }
 }

@@ -2,27 +2,29 @@ package io.openliberty.guides.cloudant;
 
 import com.ibm.cloud.cloudant.v1.Cloudant;
 import com.ibm.cloud.cloudant.v1.model.*;
+import com.ibm.cloud.objectstorage.services.kms.model.NotFoundException;
 import com.ibm.cloud.sdk.core.security.IamAuthenticator;
 import io.openliberty.guides.cos.model.DbData;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 
 @RequestScoped
 public class CloudantService {
 
-    @Inject
-    @ConfigProperty(name="cloudant_apikey")
-    private String apikey;
+//    @Inject
+//    @ConfigProperty(name="cloudant_apikey")
+//    private String apikey;
+//
+//    @Inject
+//    @ConfigProperty(name="cloudant_url")
+//    private String url;
+//
+//    @Inject
+//    @ConfigProperty(name="cloudant_db")
+//    private String db;
 
-    @Inject
-    @ConfigProperty(name="cloudant_url")
-    private String url;
-
-    @Inject
-    @ConfigProperty(name="cloudant_db")
-    private String db;
-
+    private String url="https://26ba8f16-fee1-437b-8dd5-569d2c051252-bluemix:bec0fb6003500cc895cd88ca3f1f471e506fa211515f0541ae27c7c65ef1134c@26ba8f16-fee1-437b-8dd5-569d2c051252-bluemix.cloudantnosqldb.appdomain.cloud";
+    private String apikey="kh5H6jT0yzNwRv2wPn7656f_gA0LNMv9YG_kXrNn9akj";
+    private String db="mydb";
     private Cloudant cdClient;
 
     public CloudantService(){
@@ -31,21 +33,51 @@ public class CloudantService {
         cdClient.setServiceUrl(url);
     }
 
-    public DocumentResult createDocument(DbData data){
-        Document eventDoc = new Document();
-        eventDoc.put("title", data.getTitle());
-        eventDoc.put("cosObjectName", data.getCosObjectName());
-        eventDoc.put("cosBucketName", data.getCosBucketName());
-        eventDoc.put("status", data.getStatus());
-        PutDocumentOptions documentOptions =
-                new PutDocumentOptions.Builder()
+    public String createDocument(DbData data){
+        Document exampleDocument = new Document();
+        String exampleDocId = "example";
+
+        exampleDocument.setId(exampleDocId);
+        exampleDocument.put("title", data.getTitle());
+        exampleDocument.put("cosObjectName", data.getCosObjectName());
+        exampleDocument.put("cosBucketName", data.getCosBucketName());
+        exampleDocument.put("status", data.getStatus());
+
+        // Set the options to get the document out of the database if it exists
+        GetDocumentOptions documentInfoOptions =
+                new GetDocumentOptions.Builder()
                         .db(db)
-                        .document(eventDoc)
+                        .docId(exampleDocId)
                         .build();
-        DocumentResult response =
-                cdClient.putDocument(documentOptions).execute()
-                        .getResult();
-        return response;
+
+        /* Try to get the document and set revision of exampleDocument to the
+           latest one if it previously existed in the database */
+        try {
+            Document documentInfo = cdClient
+                    .getDocument(documentInfoOptions)
+                    .execute()
+                    .getResult();
+            exampleDocument.setRev(documentInfo.getRev());
+            System.out.println("The document revision for " + exampleDocId +
+                    " is set to " + exampleDocument.getRev() + ".");
+        } catch (Exception nfe) {
+        }finally {
+            // Save the document in the database
+            PostDocumentOptions createDocumentOptions =
+                    new PostDocumentOptions.Builder()
+                            .db(db)
+                            .document(exampleDocument)
+                            .build();
+            DocumentResult createDocumentResponse = cdClient
+                    .postDocument(createDocumentOptions)
+                    .execute()
+                    .getResult();
+            // Keep track of the revision number from the `example` document object
+            exampleDocument.setRev(createDocumentResponse.getRev());
+        }
+
+        return  exampleDocument.toString();
+
     }
 
     public AllDocsResult getDocumentsList() {
@@ -58,6 +90,7 @@ public class CloudantService {
 
         AllDocsResult response =
                 cdClient.postAllDocs(docsOptions).execute().getResult();
+
         return  response;
             }
 }
