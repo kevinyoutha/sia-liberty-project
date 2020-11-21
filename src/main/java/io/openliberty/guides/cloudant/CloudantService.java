@@ -35,8 +35,7 @@ public class CloudantService {
 
     public String createDocument(DbData data){
         Document exampleDocument = new Document();
-        String exampleDocId = "example";
-
+        String exampleDocId = data.getCosObjectName();
         exampleDocument.setId(exampleDocId);
         exampleDocument.put("title", data.getTitle());
         exampleDocument.put("cosObjectName", data.getCosObjectName());
