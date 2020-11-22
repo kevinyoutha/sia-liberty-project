@@ -27,7 +27,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 // tag::RegisterProvider[]
 @RegisterProvider(UnknownUriExceptionMapper.class)
 // end::RegisterProvider[]
-@Path("/properties")
+@Path("/")
 // tag::SystemClient[]
 // tag::AutoCloseable[]
 public interface CloudantClient extends AutoCloseable {

@@ -12,20 +12,14 @@
 // end::copyright[]
 package io.openliberty.guides.cos;
 
-import com.ibm.websphere.jaxrs20.multipart.IAttachment;
 import com.ibm.websphere.jaxrs20.multipart.IMultipartBody;
 import io.openliberty.guides.cos.model.DbData;
 
-import java.io.*;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
-import javax.activation.DataHandler;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 @RequestScoped
@@ -35,77 +29,24 @@ public class CosController {
   @Inject
   CosService manager;
 
-  @POST
-  @Consumes("multipart/form-data")
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response postFormData(IMultipartBody multipartBody) {
-    List <IAttachment> attachments = multipartBody.getAllAttachments();
-    String formElementValue = null;
-    InputStream stream = null;
-    for (Iterator<IAttachment> it = attachments.iterator(); it.hasNext();) {
-      IAttachment attachment = it.next();
-      if (attachment == null) {
-        continue;
-      }
-      DataHandler dataHandler = attachment.getDataHandler();
-      try {
-        stream = dataHandler.getInputStream();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      MultivaluedMap<String, String> map = attachment.getHeaders();
-      String fileName = null;
-      String formElementName = null;
-      String[] contentDisposition = map.getFirst("Content-Disposition").split(";");
-      for (String tempName : contentDisposition) {
-        String[] names = tempName.split("=");
-        try {
-          formElementName = names[1].trim().replaceAll("\"", "");
-          if ((tempName.trim().startsWith("filename"))) {
-            fileName = formElementName;
-          }
-        }catch (Exception e){
-          e.printStackTrace();
-        }
-      }
-      if (fileName == null) {
-        StringBuffer sb = new StringBuffer();
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-        String line = null;
-        try {
-          while ((line = br.readLine()) != null) {
-            sb.append(line);
-          }
-        } catch (IOException e) {
-          e.printStackTrace();
-        } finally {
-          if (br != null) {
-            try {
-              br.close();
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-          }
-        }
-        formElementValue = sb.toString();
-        System.out.println(formElementName + ":" + formElementValue);
-      } else {
-        //handle the file as you want
-        File tempFile = new File(fileName);
+//  @POST
+//  @Consumes("multipart/form-data")
+//  @Produces(MediaType.APPLICATION_JSON)
+//  public Response postFormData(IMultipartBody multipartBody) {
+////    String response = manager.createObject(multipartBody);
+////    String response = manager.store(multipartBody);
+//    String response = null;
+//    return Response.ok(response).build();
+//  }
 
-      }
-    }
-    if (stream != null) {
-      try {
-        stream.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    DbData data = new DbData("","","");
-    DbData object = manager.createObject(data);
-    String document = manager.createDocument(object);
-    return Response.ok(document).build();
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response postFormData(DbData formData) {
+//    String response = manager.createObject(multipartBody);
+
+    String response = manager.store(formData);
+    return Response.ok(response).build();
   }
 
 
