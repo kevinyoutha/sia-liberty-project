@@ -21,8 +21,20 @@ public class DbData {
   private  int dataStreamLength;
   private  String status;
 
+
   public DbData() {
   }
+
+  public DbData(String title, String cosObjectName, String cosBucketName, String contentType, int dataStreamLength, String status) {
+    this.title = title;
+    this.cosObjectName = cosObjectName;
+    this.cosBucketName = cosBucketName;
+    this.contentType = contentType;
+    this.dataStreamLength = dataStreamLength;
+    this.status = status;
+  }
+
+
 
   public DbData(String title, String fileName, String cosBucketName, String contentType, int dataStreamLength) {
     this.title = title;
@@ -48,12 +60,40 @@ public class DbData {
     return title;
   }
 
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
   public String getCosObjectName() {
     return cosObjectName;
   }
 
+  public void setCosObjectName(String cosObjectName) {
+    this.cosObjectName = cosObjectName;
+  }
+
   public String getCosBucketName() {
     return cosBucketName;
+  }
+
+  public void setCosBucketName(String cosBucketName) {
+    this.cosBucketName = cosBucketName;
+  }
+
+  public String getContentType() {
+    return contentType;
+  }
+
+  public void setContentType(String contentType) {
+    this.contentType = contentType;
+  }
+
+  public int getDataStreamLength() {
+    return dataStreamLength;
+  }
+
+  public void setDataStreamLength(int dataStreamLength) {
+    this.dataStreamLength = dataStreamLength;
   }
 
   public String getStatus() {
@@ -63,5 +103,4 @@ public class DbData {
   public void setStatus(String status) {
     this.status = status;
   }
-
 }

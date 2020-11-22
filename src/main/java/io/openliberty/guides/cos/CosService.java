@@ -67,7 +67,7 @@ public class CosService {
 //  private String serviceInstanceId;
 
   private String apiKey="2T02CI7dyGBXx01_Iwpv8qJaR5f4nSnvBFrOhEIzHaOq";
-  private String location="us-east";
+  private String location="us";
   private String endpoint="https://s3.us-east.cloud-object-storage.appdomain.cloud";
   private String serviceInstanceId="crn:v1:bluemix:public:cloud-object-storage:global:a/126e8854225c465aaa235d2ba32cb732:7e01ed21-4187-401e-bad9-b47c1ba6457e::";
 
@@ -223,9 +223,8 @@ public class CosService {
     DbData data = new DbData(title,fileName,BUCKETNAME,contenType,dataStreamLength);
     String status = createObject(data,fileInputstream,metadata);
     data.setStatus(status);
-    System.out.println(data.toString());
-//    String response = createDocument(data);
-    return "response";
+    String response = createDocument(data);
+    return response;
   }
 
 }

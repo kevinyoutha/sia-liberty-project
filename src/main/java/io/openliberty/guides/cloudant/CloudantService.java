@@ -91,5 +91,5 @@ public class CloudantService {
                 cdClient.postAllDocs(docsOptions).execute().getResult();
 
         return  response;
-            }
+    }
 }
