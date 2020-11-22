@@ -15,6 +15,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <resteasy.version>3.13.2.Final</resteasy.version>
+        <resteasy.client.version>4.5.8.Final</resteasy.client.version>
+
         <!-- Liberty configuration -->
 <!--        <liberty.var.default.http.port>9080</liberty.var.default.http.port>-->
 <!--        <liberty.var.default.https.port>9443</liberty.var.default.https.port>-->
@@ -94,7 +97,6 @@
             <artifactId>cloudant</artifactId>
             <version>0.0.19</version>
         </dependency>
-
     </dependencies>
 
     <build>

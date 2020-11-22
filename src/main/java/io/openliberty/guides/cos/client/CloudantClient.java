@@ -17,6 +17,8 @@ package io.openliberty.guides.cos.client;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import io.openliberty.guides.cos.exception.UnknownUriException;
+import io.openliberty.guides.cos.exception.UnknownUriExceptionMapper;
 import io.openliberty.guides.cos.model.DbData;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;

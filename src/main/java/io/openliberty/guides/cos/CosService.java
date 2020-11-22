@@ -17,16 +17,13 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.activation.DataHandler;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 
 import com.ibm.cloud.objectstorage.AmazonClientException;
 import com.ibm.cloud.objectstorage.ClientConfiguration;
@@ -38,13 +35,11 @@ import com.ibm.cloud.objectstorage.services.s3.AmazonS3;
 import com.ibm.cloud.objectstorage.services.s3.AmazonS3ClientBuilder;
 import com.ibm.cloud.objectstorage.services.s3.model.*;
 import com.ibm.websphere.jaxrs20.multipart.IAttachment;
-import com.ibm.websphere.jaxrs20.multipart.IMultipartBody;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import io.openliberty.guides.cos.client.CloudantClient;
-import io.openliberty.guides.cos.client.UnknownUriException;
+import io.openliberty.guides.cos.exception.UnknownUriException;
 import io.openliberty.guides.cos.model.DbData;
 
 // tag::ApplicationScoped[]
@@ -53,7 +48,7 @@ import io.openliberty.guides.cos.model.DbData;
 public class CosService {
   private final String SUCCESS = "success" ;
   private final String FAILURE = "failure";
-  private final String BUCKETNAME = "Documents";
+  private final String BUCKETNAME = "cloud-object-storage-77-cos-standard-uu7";
 
 //  @Inject
 //  @ConfigProperty(name = "cos_apikey")
@@ -72,8 +67,8 @@ public class CosService {
 //  private String serviceInstanceId;
 
   private String apiKey="2T02CI7dyGBXx01_Iwpv8qJaR5f4nSnvBFrOhEIzHaOq";
-  private String location="us";
-  private String endpoint="https://s3-api.us-geo.objectstorage.softlayer.net";
+  private String location="us-east";
+  private String endpoint="https://s3.us-east.cloud-object-storage.appdomain.cloud";
   private String serviceInstanceId="crn:v1:bluemix:public:cloud-object-storage:global:a/126e8854225c465aaa235d2ba32cb732:7e01ed21-4187-401e-bad9-b47c1ba6457e::";
 
 
@@ -103,106 +98,22 @@ public class CosService {
             .build();
   }
 
-  public List<String> listObjects(AmazonS3 cosClient, String bucketName)
-  {
-    List<String> files = new ArrayList<>();
-    ObjectListing objectListing = cosClient.listObjects(new ListObjectsRequest().withBucketName(bucketName));
-    for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-      String index = " - " + objectSummary.getKey() + "  " + "(size = " + objectSummary.getSize() + ")";
-      files.add(index);
-    }
-    return files;
-  }
 
-  private DbData handleFormSubmission(IMultipartBody multipartBody){
-
-    List <IAttachment> attachments = multipartBody.getAllAttachments();
-    String formElementValue = null;
-    InputStream stream = null;
-    for (Iterator<IAttachment> it = attachments.iterator(); it.hasNext();) {
-      IAttachment attachment = it.next();
-      if (attachment == null) {
-        continue;
-      }
-      DataHandler dataHandler = attachment.getDataHandler();
-      try {
-        stream = dataHandler.getInputStream();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      MultivaluedMap<String, String> map = attachment.getHeaders();
-      String formElementName = null;
-      String[] contentDisposition = map.getFirst("Content-Disposition").split(";");
-      String fileName = null;
-      for (String tempName : contentDisposition) {
-        String[] names = tempName.split("=");
-        try {
-          formElementName = names[1].trim().replaceAll("\"", "");
-          if ((tempName.trim().startsWith("filename"))) {
-            fileName = formElementName;
-          }
-        }catch (Exception e){
-          e.printStackTrace();
-        }
-      }
-      if (fileName == null) {
-        StringBuffer sb = new StringBuffer();
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-        String line = null;
-        try {
-          while ((line = br.readLine()) != null) {
-            sb.append(line);
-          }
-        } catch (IOException e) {
-          e.printStackTrace();
-        } finally {
-          if (br != null) {
-            try {
-              br.close();
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-          }
-        }
-        formElementValue = sb.toString();
-        System.out.println(formElementName + ":" + formElementValue);
-      } else {
-        //handle the file as you want
-        File tempFile = new File(fileName);
-
-      }
-    }
-    if (stream != null) {
-      try {
-        stream.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-
-    //      ObjectMetadata metadata = new ObjectMetadata();
-//      metadata.setContentLength(fileText.length());
-
-
-    return null;
-
-  }
-
-
-  public DbData createObject(DbData data){
+  private String createObject(DbData data, InputStream stream,ObjectMetadata metadata){
+    String status = null;
     try{
       if(!s3Client.doesBucketExist(BUCKETNAME))
         s3Client.createBucket(BUCKETNAME);
-
-//      s3Client.putObject(data.getTitle(),data.getCosBucketName(),data.getInputStream(),metadata);
-      data.setStatus(SUCCESS);
+      s3Client.putObject(data.getTitle(),data.getCosBucketName(),stream,metadata);
+      status = SUCCESS;
     } catch (AmazonClientException e){
-      data.setStatus(FAILURE);
+      System.err.println("S3 createObject failure :"+ e.getMessage());
+      status = FAILURE;
     }
-    return data;
+    return status;
   }
 
-  public String createDocument(DbData dbData) {
+  private String createDocument(DbData dbData) {
     try {
       return cloudantClient.createDocument(dbData);
     } catch (UnknownUriException e) {
@@ -228,15 +139,94 @@ public class CosService {
     return s3Client.listBuckets().stream().map(Bucket::getName).collect(Collectors.toList());
   }
 
-  public String store(DbData data) {
-//    DbData test = new DbData("tast.php","Documents/tast.php","Documents","failure");
-    String document = null;
+  public List<String> listObjects()
+  {
+    List<String> files = new ArrayList<>();
+    ObjectListing objectListing = s3Client.listObjects(new ListObjectsRequest().withBucketName(BUCKETNAME));
+    for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+      String index = " - " + objectSummary.getKey() + "  " + "(size = " + objectSummary.getSize() + ")";
+      files.add(index);
+    }
+    return files;
+  }
+
+
+  public String handleFormUpload(IAttachment titleAttachment, IAttachment fileAttachment) {
+
+    String fileName = null;
+    String contenType = null;
+    int dataStreamLength = 0;
+    String title = null;
+
+    // set the fileName
+    String[] contentDisposition = fileAttachment.getHeader("Content-Disposition").split(";");
+    for (String tempName : contentDisposition) {
+      String[] names = tempName.split("=");
+      try {
+        String formElementName = names[1].trim().replaceAll("\"", "");
+        if ((tempName.trim().startsWith("filename"))) {
+          fileName = formElementName;
+        }
+      } catch (IndexOutOfBoundsException e) {
+        System.err.println("Header without value ");
+      }
+    }
+
+    // length of the data stream initialisation
+    InputStream fileInputstream = null;
     try {
-      document = cloudantClient.createDocument(data);
-    } catch (UnknownUriException e) {
+     fileInputstream = fileAttachment.getDataHandler().getInputStream();
+      byte[] targetArray = new byte[fileInputstream.available()];
+      fileInputstream.read(targetArray);
+      dataStreamLength = targetArray.length;
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        fileInputstream.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    contenType = fileAttachment.getDataHandler().getContentType(); // set the content type
+    ObjectMetadata metadata = new ObjectMetadata(); // define the metadata
+    metadata.setContentType(contenType); // set the metadata
+    metadata.setContentLength(dataStreamLength); // set metadata for the length of the data stream
+
+    // set the title
+    StringBuffer sb = new StringBuffer();
+    BufferedReader br = null;
+    InputStream titleStream = null;
+    try {
+      titleStream = titleAttachment.getDataHandler().getInputStream();
+      br = new BufferedReader(new InputStreamReader(titleStream));
+      String line = null;
+      while ((line = br.readLine()) != null) {
+        sb.append(line);
+      }
+      title = sb.toString();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        br.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    try {
+      titleStream.close();
+    } catch (IOException e) {
       e.printStackTrace();
     }
-    return document;
+
+    DbData data = new DbData(title,fileName,BUCKETNAME,contenType,dataStreamLength);
+    String status = createObject(data,fileInputstream,metadata);
+    data.setStatus(status);
+    System.out.println(data.toString());
+//    String response = createDocument(data);
+    return "response";
   }
+
 }
 // end::manager[]

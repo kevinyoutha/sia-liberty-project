@@ -10,7 +10,7 @@
  *     IBM Corporation - Initial implementation
  *******************************************************************************/
 // end::copyright[]
-package io.openliberty.guides.cos.client;
+package io.openliberty.guides.cos.exception;
 
 // tag::exception[]
 public class UnknownUriException extends Exception {

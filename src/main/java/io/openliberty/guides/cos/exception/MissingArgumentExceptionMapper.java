@@ -11,31 +11,32 @@
  *******************************************************************************/
 // end::copyright[]
 // tag::mapper[]
-package io.openliberty.guides.cos.client;
+package io.openliberty.guides.cos.exception;
 
-import java.util.logging.Logger;
+import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
+
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
+import java.util.logging.Logger;
 
 @Provider
-public class UnknownUriExceptionMapper
-    implements ResponseExceptionMapper<UnknownUriException> {
-  Logger LOG = Logger.getLogger(UnknownUriExceptionMapper.class.getName());
+public class MissingArgumentExceptionMapper
+    implements ResponseExceptionMapper<MissingArgumentException> {
+  Logger LOG = Logger.getLogger(MissingArgumentExceptionMapper.class.getName());
 
   @Override
   // tag::handles[]
   public boolean handles(int status, MultivaluedMap<String, Object> headers) {
-    LOG.info("status = " + status);
+    LOG.info("MissingArgumentException status = " + status);
     return status == 404;
   }
   // end::handles[]
 
   @Override
   // tag::toThrowable[]
-  public UnknownUriException toThrowable(Response response) {
-    return new UnknownUriException();
+  public MissingArgumentException toThrowable(Response response) {
+    return new MissingArgumentException();
   }
   // end::toThrowable[]
 }

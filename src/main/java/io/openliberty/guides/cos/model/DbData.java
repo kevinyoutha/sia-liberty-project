@@ -12,53 +12,36 @@
 // end::copyright[]
 package io.openliberty.guides.cos.model;
 
-import java.util.Properties;
-
 public class DbData {
 
   private  String title;
   private  String cosObjectName;
   private  String cosBucketName;
-  private  String fileType;
-  private  String fileSize;
-  private   String status;
+  private  String contentType;
+  private  int dataStreamLength;
+  private  String status;
 
   public DbData() {
   }
 
-  public DbData(String title, String cosObjectName, String cosBucketName, String status) {
+  public DbData(String title, String fileName, String cosBucketName, String contentType, int dataStreamLength) {
     this.title = title;
-    this.cosObjectName = cosObjectName;
-    this.cosBucketName = cosObjectName;
-    this.status = status;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public void setCosObjectName(String cosObjectName) {
-    this.cosObjectName = cosObjectName;
-  }
-
-  public void setCosBucketName(String cosBucketName) {
+    this.cosObjectName = fileName;
     this.cosBucketName = cosBucketName;
+    this.contentType = contentType;
+    this.dataStreamLength = dataStreamLength;
   }
 
-  public String getFileType() {
-    return fileType;
-  }
-
-  public void setFileType(String fileType) {
-    this.fileType = fileType;
-  }
-
-  public String getFileSize() {
-    return fileSize;
-  }
-
-  public void setFileSize(String fileSize) {
-    this.fileSize = fileSize;
+  @Override
+  public String toString() {
+    return "DbData{" +
+            "title='" + title + '\'' +
+            ", cosObjectName='" + cosObjectName + '\'' +
+            ", cosBucketName='" + cosBucketName + '\'' +
+            ", contentType='" + contentType + '\'' +
+            ", dataStreamLength=" + dataStreamLength +
+            ", status='" + status + '\'' +
+            '}';
   }
 
   public String getTitle() {
@@ -80,12 +63,5 @@ public class DbData {
   public void setStatus(String status) {
     this.status = status;
   }
-//
-//  @Override
-//  public boolean equals(Object host) {
-//    if (host instanceof DdData) {
-//      return hostname.equals(((DdData) host).getHostname());
-//    }
-//    return false;
-//  }
+
 }
