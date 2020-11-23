@@ -25,8 +25,8 @@ public class CloudantController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public Long getAll() {
-    AllDocsResult documents = manager.getDocumentsList();
-    return documents.getTotalRows();
+  public String getAll() {
+    String documents = manager.getDocumentsList();
+    return documents;
   }
 }

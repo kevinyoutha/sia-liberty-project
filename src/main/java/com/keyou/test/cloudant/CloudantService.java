@@ -5,6 +5,9 @@ import com.ibm.cloud.cloudant.v1.model.*;
 import com.ibm.cloud.sdk.core.security.IamAuthenticator;
 import com.keyou.test.model.DbData;
 import javax.enterprise.context.RequestScoped;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestScoped
 public class CloudantService {
@@ -78,17 +81,16 @@ public class CloudantService {
 
     }
 
-    public AllDocsResult getDocumentsList() {
+    public String getDocumentsList() {
         PostAllDocsOptions docsOptions =
                 new PostAllDocsOptions.Builder()
                         .db(db)
                         .includeDocs(true)
-                        .limit(10)
+                        .limit(50)
                         .build();
-
-        AllDocsResult response =
+        AllDocsResult data =
                 cdClient.postAllDocs(docsOptions).execute().getResult();
-
-        return  response;
+        List<Document> response =data.getRows().stream().map(DocsResultRow::getDoc).collect(Collectors.toList());
+        return  response.toString();
     }
 }
