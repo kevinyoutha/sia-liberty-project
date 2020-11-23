@@ -10,7 +10,7 @@
  *     IBM Corporation - Initial implementation
  *******************************************************************************/
 // end::copyright[]
-package io.openliberty.guides.cos.model;
+package com.keyou.test.model;
 
 public class DbData {
 

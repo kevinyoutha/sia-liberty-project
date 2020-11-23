@@ -1,17 +1,5 @@
-// tag::copyright[]
-/*******************************************************************************
- * Copyright (c) 2017, 2020 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - Initial implementation
- *******************************************************************************/
-// end::copyright[]
-// tag::manager[]
-package io.openliberty.guides.cos;
+
+package com.keyou.test.cos;
 
 import java.io.*;
 import java.net.ConnectException;
@@ -23,7 +11,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.Response;
 
 import com.ibm.cloud.objectstorage.AmazonClientException;
 import com.ibm.cloud.objectstorage.ClientConfiguration;
@@ -35,20 +22,17 @@ import com.ibm.cloud.objectstorage.services.s3.AmazonS3;
 import com.ibm.cloud.objectstorage.services.s3.AmazonS3ClientBuilder;
 import com.ibm.cloud.objectstorage.services.s3.model.*;
 import com.ibm.websphere.jaxrs20.multipart.IAttachment;
+import com.keyou.test.cos.client.CloudantClient;
+import com.keyou.test.cos.exception.UnknownUriException;
+import com.keyou.test.model.DbData;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import io.openliberty.guides.cos.client.CloudantClient;
-import io.openliberty.guides.cos.exception.UnknownUriException;
-import io.openliberty.guides.cos.model.DbData;
-
-// tag::ApplicationScoped[]
 @RequestScoped
-// end::ApplicationScoped[]
 public class CosService {
   private final String SUCCESS = "success" ;
   private final String FAILURE = "failure";
-  private final String BUCKETNAME = "cloud-object-storage-77-cos-standard-uu7";
+  private final String BUCKETNAME = "molapi";
 
 //  @Inject
 //  @ConfigProperty(name = "cos_apikey")
@@ -68,7 +52,7 @@ public class CosService {
 
   private String apiKey="2T02CI7dyGBXx01_Iwpv8qJaR5f4nSnvBFrOhEIzHaOq";
   private String location="us";
-  private String endpoint="https://s3.us-east.cloud-object-storage.appdomain.cloud";
+  private String endpoint="s3.us-east.cloud-object-storage.appdomain.cloud";
   private String serviceInstanceId="crn:v1:bluemix:public:cloud-object-storage:global:a/126e8854225c465aaa235d2ba32cb732:7e01ed21-4187-401e-bad9-b47c1ba6457e::";
 
 
@@ -99,7 +83,7 @@ public class CosService {
   }
 
 
-  private String createObject(DbData data, InputStream stream,ObjectMetadata metadata){
+  private String createObject(DbData data, InputStream stream, ObjectMetadata metadata){
     String status = null;
     try{
       if(!s3Client.doesBucketExist(BUCKETNAME))
@@ -228,4 +212,3 @@ public class CosService {
   }
 
 }
-// end::manager[]

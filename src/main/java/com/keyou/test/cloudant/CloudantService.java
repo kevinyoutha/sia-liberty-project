@@ -1,10 +1,9 @@
-package io.openliberty.guides.cloudant;
+package com.keyou.test.cloudant;
 
 import com.ibm.cloud.cloudant.v1.Cloudant;
 import com.ibm.cloud.cloudant.v1.model.*;
-import com.ibm.cloud.objectstorage.services.kms.model.NotFoundException;
 import com.ibm.cloud.sdk.core.security.IamAuthenticator;
-import io.openliberty.guides.cos.model.DbData;
+import com.keyou.test.model.DbData;
 import javax.enterprise.context.RequestScoped;
 
 @RequestScoped

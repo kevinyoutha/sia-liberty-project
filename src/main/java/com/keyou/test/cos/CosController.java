@@ -1,29 +1,19 @@
-// tag::copyright[]
-/*******************************************************************************
- * Copyright (c) 2017, 2020 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - Initial implementation
- *******************************************************************************/
-// end::copyright[]
-package io.openliberty.guides.cos;
+
+package com.keyou.test.cos;
 
 import com.ibm.websphere.jaxrs20.multipart.IAttachment;
 import com.ibm.websphere.jaxrs20.multipart.IMultipartBody;
-import io.openliberty.guides.cos.exception.InvalidArgumentSizeException;
+import com.keyou.test.cos.exception.MultipartFormExceptionMapper;
+import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 
 import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+@RegisterProvider(MultipartFormExceptionMapper.class)
 
 @RequestScoped
 @Path("/upload")
@@ -34,13 +24,13 @@ public class CosController {
 
   @POST
   @Consumes("multipart/form-data")
-  @Produces("multipart/form-data")
-  public Response upload(IMultipartBody multipartBody) throws InvalidArgumentSizeException {
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response upload(IMultipartBody multipartBody) throws Exception {
 
     List<IAttachment> attachments = multipartBody.getAllAttachments();
 
     if (attachments.size() != 2) {
-      throw new InvalidArgumentSizeException();
+      throw new Exception("Missing form arguments");
     }
 
     // Looking for file Attachment
@@ -57,6 +47,7 @@ public class CosController {
     return Response.ok(response).build();
 
   }
+
 
   @GET
   @Path("/buckets")
