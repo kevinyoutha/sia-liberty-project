@@ -1,0 +1,7 @@
+---
+applications:
+ - name: moyouk
+#   random-route: true
+   path: target/sia-microprofile-test-client.war
+#   memory: 256M
+   instances: 1
