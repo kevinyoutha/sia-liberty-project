@@ -5,8 +5,6 @@
         <feature>cdi-2.0</feature>
         <feature>jaxrs-2.1</feature>
         <feature>jsonp-1.1</feature>
-<!--        <feature>servlet-3.1</feature>-->
-<!--        <feature>websocket-1.1</feature>-->
         <feature>mpRestClient-1.4</feature>
 
     </featureManager>
@@ -17,13 +15,6 @@
     <httpEndpoint host="*" httpPort="${default.http.port}" httpsPort="${default.https.port}"
                   id="defaultHttpEndpoint"/>
 
-<!--    <httpEndpoint id="defaultHttpEndpoint"-->
-<!--                  host="*"-->
-<!--                  httpPort="9080">-->
-<!--        <tcpOptions soReuseAddr="true"/>-->
-<!--    </httpEndpoint>-->
-
-<!--    <application name="GetStartedLiberty" context-root="/" location="${appLocation}" type="war"/>-->
-    <webApplication location="GetStartedLiberty.war" contextRoot="/"/>
+    <webApplication location="kevinyoutha.war" contextRoot="/"/>
 
 </server>

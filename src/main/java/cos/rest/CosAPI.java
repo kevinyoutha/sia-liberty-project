@@ -6,17 +6,20 @@ import com.ibm.websphere.jaxrs20.multipart.IAttachment;
 import com.ibm.websphere.jaxrs20.multipart.IMultipartBody;
 import cos.store.ObjectStore;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
 //@RegisterProvider(MultipartFormExceptionMapper.class)
 
+@ApplicationScoped
+@ApplicationPath("cos")
 @Path("/")
-public class CosAPI {
-
+public class CosAPI extends Application {
 
   @Inject
   ObjectStore store;     //Our cloud object storage store

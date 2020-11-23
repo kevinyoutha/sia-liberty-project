@@ -1,7 +1,7 @@
 ---
 applications:
- - name: GetStartedLiberty
+ - name: siaproject
 #   random-route: true
-   path: target/GetStartedLiberty.war
+   path: target/kevinyoutha.war
 #   memory: 256M
    instances: 1

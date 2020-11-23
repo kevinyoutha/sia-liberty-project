@@ -18,12 +18,10 @@ package cloudant.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Application;
 
 import com.google.gson.Gson;
 
@@ -31,9 +29,10 @@ import cloudant.Document;
 import cloudant.store.DocumentStore;
 import cloudant.store.DocumentStoreFactory;
 
-@RequestScoped
-@Path("/")
-public class DocumentAPI {
+@ApplicationScoped
+@ApplicationPath("cloudant")
+@Path("/documents")
+public class DocumentAPI extends Application {
 
     //Our database store
     DocumentStore store = DocumentStoreFactory.getInstance();

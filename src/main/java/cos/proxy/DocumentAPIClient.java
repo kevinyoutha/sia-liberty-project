@@ -10,7 +10,7 @@ import javax.ws.rs.*;
 
 @RegisterRestClient(configKey = "documentAPIClient", baseUri = "http://localhost:9080/cloudant")
 @RegisterProvider(UnknownUriExceptionMapper.class)
-@Path("/")
+@Path("/documents")
 public interface DocumentAPIClient extends AutoCloseable {
 
   @POST

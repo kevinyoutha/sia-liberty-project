@@ -1,6 +1,6 @@
 FROM websphere-liberty:microProfile
 COPY server.xml /config/
-ADD target/GetStartedLiberty.war /opt/ibm/wlp/usr/servers/defaultServer/dropins/
+ADD target/kevinyoutha.war /opt/ibm/wlp/usr/servers/defaultServer/dropins/
 ENV LICENSE accept
 EXPOSE 9080
 
