@@ -26,34 +26,39 @@ import com.keyou.test.cos.client.CloudantClient;
 import com.keyou.test.cos.exception.UnknownUriException;
 import com.keyou.test.model.DbData;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @RequestScoped
 public class CosService {
   private final String SUCCESS = "success" ;
   private final String FAILURE = "failure";
-  private final String BUCKETNAME = "molapi";
 
-//  @Inject
-//  @ConfigProperty(name = "cos_apikey")
-//  private String apiKey;
-//
-//  @Inject
-//  @ConfigProperty(name = "cos_location")
-//  private String location;
-//
-//  @Inject
-//  @ConfigProperty(name = "cos_endpoint")
-//  private String endpoint;
-//
-//  @Inject
-//  @ConfigProperty(name = "cos_service_instance_id")
-//  private String serviceInstanceId;
+  @Inject
+  @ConfigProperty(name = "cos_apikey")
+  private String apiKey;
 
-  private String apiKey="2T02CI7dyGBXx01_Iwpv8qJaR5f4nSnvBFrOhEIzHaOq";
-  private String location="us";
-  private String endpoint="s3.us-east.cloud-object-storage.appdomain.cloud";
-  private String serviceInstanceId="crn:v1:bluemix:public:cloud-object-storage:global:a/126e8854225c465aaa235d2ba32cb732:7e01ed21-4187-401e-bad9-b47c1ba6457e::";
+  @Inject
+  @ConfigProperty(name = "cos_location")
+  private String location;
+
+  @Inject
+  @ConfigProperty(name = "cos_endpoint")
+  private String endpoint;
+
+  @Inject
+  @ConfigProperty(name = "cos_service_instance_id")
+  private String serviceInstanceId;
+
+  @Inject
+  @ConfigProperty(name = "cos_bucket_name")
+  private String bucketName;
+
+//  private String apiKey="YTDFYue96NGeqzVwg2POt5b4TjJfP9ikoPbvjTWnGYz7";
+//  private String location="us-south";
+//  private String endpoint="https://s3.us-south.cloud-object-storage.appdomain.cloud";
+//  private String serviceInstanceId="crn:v1:bluemix:public:cloud-object-storage:global:a/126e8854225c465aaa235d2ba32cb732:7e01ed21-4187-401e-bad9-b47c1ba6457e::";
+//  private final String bucketName = "youtha";
 
 
   @Inject
@@ -86,8 +91,8 @@ public class CosService {
   private String createObject(DbData data, InputStream stream, ObjectMetadata metadata){
     String status = null;
     try{
-      if(!s3Client.doesBucketExist(BUCKETNAME))
-        s3Client.createBucket(BUCKETNAME);
+      if(!s3Client.doesBucketExist(bucketName))
+        s3Client.createBucket(bucketName);
       s3Client.putObject(data.getTitle(),data.getCosBucketName(),stream,metadata);
       status = SUCCESS;
     } catch (AmazonClientException e){
@@ -126,7 +131,7 @@ public class CosService {
   public List<String> listObjects()
   {
     List<String> files = new ArrayList<>();
-    ObjectListing objectListing = s3Client.listObjects(new ListObjectsRequest().withBucketName(BUCKETNAME));
+    ObjectListing objectListing = s3Client.listObjects(new ListObjectsRequest().withBucketName(bucketName));
     for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
       String index = " - " + objectSummary.getKey() + "  " + "(size = " + objectSummary.getSize() + ")";
       files.add(index);
@@ -204,7 +209,7 @@ public class CosService {
       e.printStackTrace();
     }
 
-    DbData data = new DbData(title,fileName,BUCKETNAME,contenType,dataStreamLength);
+    DbData data = new DbData(title,fileName,bucketName,contenType,dataStreamLength);
     String status = createObject(data,fileInputstream,metadata);
     data.setStatus(status);
     String response = createDocument(data);
