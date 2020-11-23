@@ -17,6 +17,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import cloudant.Document;
 import cos.CosObject;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestScoped
+@ApplicationScoped
 public class ObjectStore {
   private final String SUCCESS = "success" ;
   private final String FAILURE = "failure";

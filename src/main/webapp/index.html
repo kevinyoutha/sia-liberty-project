@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello World</title>
+    <title>SIA MULTIPART FORM UPLOAD TEST PROJECT</title>
 
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -28,23 +28,27 @@
             $.i18n().load( {
                 en: {
                     "welcome": "Welcome.",
-                    "name": "name",
-                    "what_is_your_title": "What is the title?",
-                    "hello": "Hello $1",
+                    "title": "title",
+                    "upload": "Upload",
+                    "what_is_the_title": "What is the title",
+                    "where_is_the_file": "Where is the file",
                     "added_to_database": "Hello $1, I've added you to the database!",
                     "database_contents": "Database contents: "
                 },
-                ja: {
-                    "welcome": "ようこそ。",
-                    "name": "名前",
-                    "what_is_your_name": "お名前を教えてください。",
-                    "hello": "こんにちは $1",
-                    "added_to_database": "こんにちは $1 さん、あなたをデータベースに追加しました。",
-                    "database_contents": "データベースの内容: "
+                fr: {
+                    "welcome": "Bonjour",
+                    "title": "Titre",
+                    "upload": "Envoyer",
+                    "what_is_the_title": "Quel est le titre",
+                    "where_is_the_file": "Sélectionner le fichier",
+                    "added_to_database": "Sauvegardé",
+                    "database_contents": "Contenu de la base de données "
                 }
             } );
             $('body').i18n();
-            $('#user_name').attr("placeholder", $.i18n('name') );
+            $('#doc_title').attr("placeholder", $.i18n('title') );
+            $('#doc_upload').attr("value", $.i18n('upload') );
+
         });
         </script>
 
@@ -53,18 +57,25 @@
 <body>
     <div class="container" id="container">
         <h1 data-i18n="welcome"></h1> <!- Welcome ->
-        <div id="nameInput" class="input-group-lg center-block helloInput">
-            <p class="lead" data-i18n="what_is_your_title"></p>
-            <input id="doc_title" type="text" class="form-control" aria-describedby="sizing-addon1" value="" />
-        </div>
-        <p id="response" class="lead text-center"></p>
+        <form id="fileUploadForm" enctype="multipart/form-data">
+            <div id="titleInput" class="input-group-lg center-block titleInput">
+                <p class="lead" data-i18n="what_is_the_title"></p>
+                <input id="doc_title" type="text" class="form-control" aria-describedby="sizing-addon1" value="" />
+            </div>
 
+            <div id="fileInput" class="input-group-lg center-block fileInput">
+                <p class="lead" data-i18n="where_is_the_file"></p>
+                <input id="doc_file" type="file" class="form-control" aria-describedby="sizing-addon1" value="" />
+            </div>
+
+            <div class="input-group-lg center-block fileInput">
+                <input type="submit" id="doc_upload" data-i18n="Upload" value="Upload">
+            </div>
+        </form>
+        <p id="response" class="lead text-center"></p>
         <p id="databaseNames" class="lead text-center"></p>
     </div>
     <footer class="footer">
-        <div class="container">
-            <span><a href="https://console.bluemix.net/docs/tutorials/index.html" target="_blank">Looking for more tutorials?</a></span>
-        </div>
     </footer>
 
 </body>
@@ -74,48 +85,63 @@
 
 
 <script>
-    	//Submit data when enter key is pressed
-        $('#doc_title').keydown(function(e) {
-        	var name = $('#doc_title').val();
-            if (e.which == 13 && name.length > 0) { //catch Enter key
-            	//POST request to API to create a new document entry in the database
-                $.ajax({
-				  method: "POST",
-				  url: "./api/documents",
-				  contentType: "application/json",
-				  data: JSON.stringify({title: title })
-				})
-                .done(function(data) {
-                    if(data && data.name){
-                        if(data._id)
-                            $('#response').html($.i18n('added_to_database', AntiXSS.sanitizeInput(data.name)));
-                        else
-                            $('#response').html($.i18n('hello', AntiXSS.sanitizeInput(data.name))); 
-                    }
-                    else {
-                        $('#response').html(AntiXSS.sanitizeInput(data));
-                    }
-                    $('#nameInput').hide();
-                    getNames();
-                });
+    // when upload button is cliqued
+    $("#doc_upload").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        // Get form
+        var form = $('#fileUploadForm')[0];
+
+        // Create an FormData object
+        var data = new FormData(form);
+
+        // disabled the submit button
+        $("#doc_upload").prop("disabled", true);
+
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "./cos/upload",
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 600000,
+            success: function (data) {
+                if(data && data.name){
+                    if(data._id)
+                        $('#response').html($.i18n('added_to_database', AntiXSS.sanitizeInput(data.name)));
+                    else
+                        $('#response').html($.i18n('hello', AntiXSS.sanitizeInput(data.name)));
+                }
+                $("#doc_upload").prop("disabled", false);
+            },
+            error: function (e) {
+                $('#response').html(AntiXSS.sanitizeInput(data));
+                $("#result").text(e.responseText);
+                $("#doc_upload").prop("disabled", false);
+                $('#nameInput').hide();
+                getNames();
             }
         });
 
-        //Retrieve all the visitors from the database
-        function getNames(){
-          $.get("./api/documents")
-              .done(function(data) {
-                  if(data.length > 0) {
-                    data.forEach(function(element, index) {
-                      data[index] = AntiXSS.sanitizeInput(element)
-                    });
-                    $('#databaseNames').html($.i18n('database_contents') + JSON.stringify(data));
-                  }
-              });
+    });
+
+    //Retrieve all the documents from the database
+    function getDocuments(){
+      $.get("./cloudant/documents")
+      .done(function(data) {
+          if(data.length > 0) {
+            data.forEach(function(element, index) {
+              data[index] = AntiXSS.sanitizeInput(element)
+            });
+            $('#databaseNames').html($.i18n('database_contents') + JSON.stringify(data));
           }
+      });
+    }
 
-          //Call getNames on page load.
-          getNames();
-
-
-    </script>
+    //Call getDocuments on page load.
+    getDocuments();
+</script>

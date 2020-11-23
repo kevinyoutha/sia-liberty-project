@@ -2,9 +2,12 @@
 package cos.rest;
 
 import cloudant.Document;
+import com.google.gson.Gson;
 import com.ibm.websphere.jaxrs20.multipart.IAttachment;
 import com.ibm.websphere.jaxrs20.multipart.IMultipartBody;
+import cos.exception.ExceptionMapperProvider;
 import cos.store.ObjectStore;
+import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -13,9 +16,9 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.NoSuchElementException;
 
-//@RegisterProvider(MultipartFormExceptionMapper.class)
-
+@RegisterProvider(ExceptionMapperProvider.class)
 @ApplicationScoped
 @ApplicationPath("cos")
 @Path("/")
@@ -56,22 +59,40 @@ public class CosAPI extends Application {
     List<IAttachment> attachments = multipartBody.getAllAttachments();
 
     if (attachments.size() != 2) {
-//      throw new Exception("Missing form arguments");
+      return Response.status(Response.Status.BAD_REQUEST)
+              .entity("{ \"error\" : \"Missing arguments !"
+                      + " Please provide file and title arguments "
+                      + " \" }")
+              .build();
     }
 
-    // Looking for file Attachment
-    IAttachment fileAttachment = attachments.stream()
-            .filter(iAttachment -> iAttachment.getContentType().getType().contains("application"))
-            .findFirst().get();
+    try {
+      // Looking for file Attachment
+      IAttachment fileAttachment = attachments.stream()
+              .filter(iAttachment -> iAttachment.getContentType().getType().contains("application"))
+              .findFirst().get();
 
-    // Looking for plain text title Attachment
-    IAttachment titleAttachment = attachments.stream()
-            .filter(iAttachment -> iAttachment.getContentType().getType().contains("text"))
-            .findFirst().get();
+      // Looking for plain text title Attachment
+      IAttachment titleAttachment = attachments.stream()
+              .filter(iAttachment -> iAttachment.getContentType().getType().contains("text"))
+              .findFirst().get();
+      Document response = store.handleFormUpload(titleAttachment, fileAttachment);
+      return Response.ok(response).build();
 
-    Document response = store.handleFormUpload(titleAttachment, fileAttachment);
-    return Response.ok(response).build();
+    }catch (NoSuchElementException e) {
+      return Response.status(Response.Status.BAD_REQUEST)
+              .entity("{ \"error\" : \"Missing arguments !"
+                      + " Please provide file and title arguments "
+                      + " \" }")
+              .build();
+    }
+  }
 
+  @GET
+  @Path("/test")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String test() {
+    return "test";
   }
 
   /**
@@ -90,8 +111,16 @@ public class CosAPI extends Application {
   @GET
   @Path("/buckets")
   @Produces(MediaType.APPLICATION_JSON)
-  public List<String> getBuckets() {
-    return store.getBucketsList();
+  public String getBuckets() {
+    String response = null;
+
+    try {
+      List<String> bucketsList = store.getBucketsList();
+      response = new Gson().toJson(bucketsList);
+    }catch (Exception e){
+      response = new Gson().toJson(e);
+    }
+    return response;
   }
 
   /**
@@ -112,7 +141,8 @@ public class CosAPI extends Application {
   @GET
   @Path("/objects")
   @Produces(MediaType.APPLICATION_JSON)
-  public List<String> getObjects() {
-    return store.listObjects();
+  public String getObjects() {
+    List<String> objects = store.listObjects();
+    return new Gson().toJson(objects);
   }
 }
