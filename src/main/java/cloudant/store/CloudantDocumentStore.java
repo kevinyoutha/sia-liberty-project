@@ -12,6 +12,9 @@ import com.google.gson.JsonObject;
 
 import cloudant.Document;
 
+import javax.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
 public class CloudantDocumentStore implements DocumentStore {
     
     private Database db = null;

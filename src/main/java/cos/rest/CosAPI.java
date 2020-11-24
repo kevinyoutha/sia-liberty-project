@@ -5,6 +5,7 @@ import cloudant.Document;
 import com.google.gson.Gson;
 import com.ibm.websphere.jaxrs20.multipart.IAttachment;
 import com.ibm.websphere.jaxrs20.multipart.IMultipartBody;
+import cos.CosObject;
 import cos.exception.ExceptionMapperProvider;
 import cos.store.ObjectStore;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
@@ -88,13 +89,6 @@ public class CosAPI extends Application {
     }
   }
 
-  @GET
-  @Path("/test")
-  @Produces(MediaType.APPLICATION_JSON)
-  public String test() {
-    return "test";
-  }
-
   /**
    * Gets all buckets.
    * REST API example:
@@ -118,7 +112,7 @@ public class CosAPI extends Application {
       List<String> bucketsList = store.getBucketsList();
       response = new Gson().toJson(bucketsList);
     }catch (Exception e){
-      response = new Gson().toJson(e);
+      response = new Gson().toJson(e.getStackTrace());
     }
     return response;
   }

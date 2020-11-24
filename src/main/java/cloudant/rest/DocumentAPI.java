@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Application;
 
@@ -27,7 +28,6 @@ import com.google.gson.Gson;
 
 import cloudant.Document;
 import cloudant.store.DocumentStore;
-import cloudant.store.DocumentStoreFactory;
 
 @ApplicationScoped
 @ApplicationPath("cloudant")
@@ -35,7 +35,8 @@ import cloudant.store.DocumentStoreFactory;
 public class DocumentAPI extends Application {
 
     //Our database store
-    DocumentStore store = DocumentStoreFactory.getInstance();
+    @Inject
+    private DocumentStore store;
 
     /**
      * Gets all Documents.

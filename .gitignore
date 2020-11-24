@@ -10,7 +10,7 @@
 /src/main/liberty/config/server.env
 
 src/main/liberty/config/server.env
-src/main/resources/localdev-config.json
+src/main/resourcesold/localdev-config.json
 
 #protect credentials properties
 src/main/webapp/META-INF/*.properties

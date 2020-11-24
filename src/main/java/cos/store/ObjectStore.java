@@ -10,14 +10,13 @@ import com.ibm.cloud.objectstorage.services.s3.AmazonS3;
 import com.ibm.cloud.objectstorage.services.s3.AmazonS3ClientBuilder;
 import com.ibm.cloud.objectstorage.services.s3.model.*;
 import com.ibm.websphere.jaxrs20.multipart.IAttachment;
-import cos.exception.UnknownUriException;
 import cos.proxy.DocumentAPIClient;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import cloudant.Document;
 import cos.CosObject;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
@@ -31,33 +30,35 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ApplicationScoped
+//@ApplicationScoped
+@RequestScoped
 public class ObjectStore {
   private final String SUCCESS = "success" ;
   private final String FAILURE = "failure";
 
 //  @Inject
-//  @ConfigProperty(name = "cos_apikey")
+//  @ConfigProperty(name="cos_apikey")
 //  private String apiKey;
 //
 //  @Inject
-//  @ConfigProperty(name = "cos_location")
+//  @ConfigProperty(name="cos_location")
 //  private String location;
 //
 //  @Inject
-//  @ConfigProperty(name = "cos_endpoint")
+//  @ConfigProperty(name="cos_endpoint")
 //  private String endpoint;
 //
 //  @Inject
-//  @ConfigProperty(name = "cos_service_instance_id")
+//  @ConfigProperty(name="cos_serviceInstanceId")
 //  private String serviceInstanceId;
 //
 //  @Inject
-//  @ConfigProperty(name = "cos_bucket_name")
+//  @ConfigProperty(name="cos_bucketName")
 //  private String bucketName;
 
+
   private String apiKey="x-JaLoZLWQ_V4RizRNcRHVddInWmvTesEQneiVniL-A-";
-  private String location="us-south";
+  private String location="us";
   private String endpoint="https://s3.us-south.cloud-object-storage.appdomain.cloud";
   private String serviceInstanceId="crn:v1:bluemix:public:cloud-object-storage:global:a/126e8854225c465aaa235d2ba32cb732:7e01ed21-4187-401e-bad9-b47c1ba6457e::";
   private final String bucketName = "youtha";
@@ -67,6 +68,7 @@ public class ObjectStore {
   private DocumentAPIClient documentAPIClient;
 
   private final AmazonS3 s3Client;
+
 
   public ObjectStore()  {
     s3Client = createClient(apiKey,serviceInstanceId,endpoint,location);
@@ -88,7 +90,6 @@ public class ObjectStore {
             .build();
   }
 
-
   private String createObject(CosObject object, InputStream stream, ObjectMetadata metadata){
     String status = null;
     try{
@@ -107,12 +108,15 @@ public class ObjectStore {
     Document newDocument = new Document(object.getTitle(),object.getCosBucketName(),object.getCosObjectName(),object.getStatus());
     try {
       return documentAPIClient.newDocument(newDocument);
-    } catch (UnknownUriException e) {
-      System.err.println("The given URI is not formatted correctly.");
-    } catch (ProcessingException ex) {
-      handleProcessingException(ex);
+    } catch (Exception e){
+      System.err.println("createDocument exception :"+e.getMessage());
     }
-    return null;
+//    } catch (UnknownUriException e) {
+//      System.err.println("The given URI is not formatted correctly.");
+//    } catch (ProcessingException ex) {
+//      handleProcessingException(ex);
+//    }
+    return newDocument;
   }
 
 
@@ -122,7 +126,7 @@ public class ObjectStore {
         || rootEx instanceof ConnectException)) {
       System.err.println("The specified host is unknown.");
     } else {
-      throw ex;
+      System.err.println(ex.getMessage());
     }
   }
 
@@ -159,7 +163,7 @@ public class ObjectStore {
           fileName = formElementName;
         }
       } catch (IndexOutOfBoundsException e) {
-        System.err.println("Header without value ");
+        System.out.println("Header without value ");
       }
     }
 
