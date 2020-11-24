@@ -5,3 +5,6 @@ applications:
    path: target/kevinyoutha.war
 #   memory: 256M
    instances: 1
+   env:
+     JBP_CONFIG_LIBERTY: "[version: +, app_archive: {features: [microProfile-3.3, beanValidation-2.0]}]"
+     IBM_LIBERTY_MONTHLY: true

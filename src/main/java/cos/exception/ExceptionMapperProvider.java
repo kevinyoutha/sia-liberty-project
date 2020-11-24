@@ -20,7 +20,6 @@ public class ExceptionMapperProvider implements ExceptionMapper<Exception>
     }
 }
 
-//@XmlRootElement
 class BasicResponse {
 
     public int internalStatus;

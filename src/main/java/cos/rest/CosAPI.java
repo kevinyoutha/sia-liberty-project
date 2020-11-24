@@ -24,8 +24,12 @@ import java.util.NoSuchElementException;
 @Path("/")
 public class CosAPI extends Application {
 
+  //TODO : fix dependency injection on deployment in bluemix
   @Inject
-  ObjectStore store;     //Our cloud object storage store
+  ObjectStore store;
+
+  // TODO: For bluemix and to remove after enabling CDI on bluemix
+//  ObjectStore store = new ObjectStore();     //Our cloud object storage store
 
   /**
    * Creates a new Document.
@@ -112,15 +116,8 @@ public class CosAPI extends Application {
   @Path("/buckets")
   @Produces(MediaType.APPLICATION_JSON)
   public String getBuckets() {
-    String response = null;
-
-    try {
-      List<String> bucketsList = store.getBucketsList();
-      response = new Gson().toJson(bucketsList);
-    }catch (Exception e){
-      response = new Gson().toJson(e);
-    }
-    return response;
+    List<String> bucketsList = store.getBucketsList();
+    return new Gson().toJson(bucketsList);
   }
 
   /**

@@ -62,9 +62,11 @@ public class ObjectStore {
   private String serviceInstanceId="crn:v1:bluemix:public:cloud-object-storage:global:a/126e8854225c465aaa235d2ba32cb732:7e01ed21-4187-401e-bad9-b47c1ba6457e::";
   private final String bucketName = "youtha";
 
+  //TODO : fix dependency injection preventy app to work on bluemix
   @Inject
   @RestClient
-  private DocumentAPIClient documentAPIClient;
+  private DocumentAPIClient documentAPIClient;    //Document client proxy
+
 
   private final AmazonS3 s3Client;
 

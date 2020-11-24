@@ -2,11 +2,7 @@
 
     <featureManager>
         <feature>beanValidation-2.0</feature>
-        <feature>cdi-2.0</feature>
-        <feature>jaxrs-2.1</feature>
-        <feature>jsonp-1.1</feature>
-        <feature>mpRestClient-1.4</feature>
-
+        <feature>microProfile-3.3</feature>
     </featureManager>
 
     <variable name="default.http.port" defaultValue="9080"/>
@@ -15,6 +11,7 @@
     <httpEndpoint host="*" httpPort="${default.http.port}" httpsPort="${default.https.port}"
                   id="defaultHttpEndpoint"/>
 
+    <ssl id="defaultSSLConfig"  trustDefaultCerts="true"/>
     <webApplication location="kevinyoutha.war" contextRoot="/"/>
 
 </server>

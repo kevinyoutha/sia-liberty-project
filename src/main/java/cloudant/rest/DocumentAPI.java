@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Application;
 
@@ -34,8 +35,7 @@ import cloudant.store.DocumentStoreFactory;
 @Path("/documents")
 public class DocumentAPI extends Application {
 
-    //Our database store
-    DocumentStore store = DocumentStoreFactory.getInstance();
+    DocumentStore store = DocumentStoreFactory.getInstance();     //Our database store
 
     /**
      * Gets all Documents.
