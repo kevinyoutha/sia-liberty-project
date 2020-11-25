@@ -11,8 +11,10 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -31,6 +33,8 @@ public class CosAPI extends Application {
   // TODO: For bluemix and to remove after enabling CDI on bluemix
 //  ObjectStore store = new ObjectStore();     //Our cloud object storage store
 
+
+
   /**
    * Creates a new Document.
    *
@@ -41,7 +45,8 @@ public class CosAPI extends Application {
    * POST Body:
    * <code>
    * {
-   *   "name":"Bob"
+   *   "file":"/Users/klim/Downloads/download.jpeg",
+   *   "title":"Some JPEG File"
    * }
    * </code>
    * Response:
@@ -51,52 +56,17 @@ public class CosAPI extends Application {
    *   "name":"Bob"
    * }
    * </code>
-   * @param multipartBody The new object to create.
+   * @param title The object name to create.
+   * @param filepath The filepath of the file to create.
    * @return The Document after it has been passed stored.  This will include a unique ID for the Visitor.
    */
   @POST
   @Path("/upload")
   @Consumes("multipart/form-data")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response upload(IMultipartBody multipartBody) {
-
-    List<IAttachment> attachments = multipartBody.getAllAttachments();
-
-    if (attachments.size() != 2) {
-      return Response.status(Response.Status.BAD_REQUEST)
-              .entity("{ \"error\" : \"Missing arguments !"
-                      + " Please provide file and title arguments "
-                      + " \" }")
-              .build();
-    }
-
-    try {
-      // Looking for file Attachment
-      IAttachment fileAttachment = attachments.stream()
-              .filter(iAttachment -> iAttachment.getContentType().getType().contains("application"))
-              .findFirst().get();
-
-      // Looking for plain text title Attachment
-      IAttachment titleAttachment = attachments.stream()
-              .filter(iAttachment -> iAttachment.getContentType().getType().contains("text"))
-              .findFirst().get();
-      Document response = store.handleFormUpload(titleAttachment, fileAttachment);
-      return Response.ok(response).build();
-
-    }catch (NoSuchElementException e) {
-      return Response.status(Response.Status.BAD_REQUEST)
-              .entity("{ \"error\" : \"Missing arguments !"
-                      + " Please provide file and title arguments "
-                      + " \" }")
-              .build();
-    }
-  }
-
-  @GET
-  @Path("/test")
-  @Produces(MediaType.APPLICATION_JSON)
-  public String test() {
-    return "test";
+  public Document uploadFile(@NotNull @FormParam(value="title") String title, @NotNull @FormParam("file") String filepath ) {
+    Document document = store.upload(title, filepath);
+    return document;
   }
 
   /**
