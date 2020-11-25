@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.ibm.websphere.jaxrs20.multipart.IAttachment;
 import com.ibm.websphere.jaxrs20.multipart.IMultipartBody;
 import cos.exception.ExceptionMapperProvider;
+import cos.exception.UnknownUriException;
 import cos.store.ObjectStore;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 
@@ -64,7 +65,7 @@ public class CosAPI extends Application {
   @Path("/upload")
   @Consumes("multipart/form-data")
   @Produces(MediaType.APPLICATION_JSON)
-  public Document uploadFile(@NotNull @FormParam(value="title") String title, @NotNull @FormParam("file") String filepath ) {
+  public Document uploadFile(@NotNull @FormParam(value="title") String title, @NotNull @FormParam("file") String filepath ) throws UnknownUriException {
     Document document = store.upload(title, filepath);
     return document;
   }
