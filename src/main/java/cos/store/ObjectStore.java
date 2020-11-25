@@ -100,13 +100,13 @@ public class ObjectStore {
     return files;
   }
 
-  public Document upload(String title, String filePath) throws UnknownUriException {
+  public Document upload(String title, String file) throws UnknownUriException {
     String status = null;
     try {
       s3Client.putObject(
               bucketName, // the name of the destination bucket
               title, // the object key
-              new File(filePath)
+              new File(file)
       );
       status = SUCCESS;
     }catch (Exception e){

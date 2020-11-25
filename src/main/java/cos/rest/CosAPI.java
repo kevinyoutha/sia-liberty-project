@@ -3,8 +3,6 @@ package cos.rest;
 
 import cloudant.Document;
 import com.google.gson.Gson;
-import com.ibm.websphere.jaxrs20.multipart.IAttachment;
-import com.ibm.websphere.jaxrs20.multipart.IMultipartBody;
 import cos.exception.ExceptionMapperProvider;
 import cos.exception.UnknownUriException;
 import cos.store.ObjectStore;
@@ -12,14 +10,11 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RegisterProvider(ExceptionMapperProvider.class)
 @ApplicationScoped
@@ -46,7 +41,7 @@ public class CosAPI extends Application {
    * POST Body:
    * <code>
    * {
-   *   "file":"/Users/klim/Downloads/download.jpeg",
+   *   "file":@"/Users/klim/Downloads/download.jpeg",
    *   "title":"Some JPEG File"
    * }
    * </code>
@@ -58,16 +53,16 @@ public class CosAPI extends Application {
    * }
    * </code>
    * @param title The object name to create.
-   * @param filepath The filepath of the file to create.
+   * @param file The filepath of the file to create.
    * @return The Document after it has been passed stored.  This will include a unique ID for the Visitor.
    */
   @POST
   @Path("/upload")
   @Consumes("multipart/form-data")
   @Produces(MediaType.APPLICATION_JSON)
-  public Document uploadFile(@NotNull @FormParam(value="title") String title, @NotNull @FormParam("file") String filepath ) throws UnknownUriException {
-    Document document = store.upload(title, filepath);
-    return document;
+  public String uploadFile(@NotEmpty @FormParam(value="title") String title, @NotEmpty @FormParam("file") String file ) throws UnknownUriException {
+    Document document = store.upload(title, file);
+    return new Gson().toJson(document);
   }
 
   /**
